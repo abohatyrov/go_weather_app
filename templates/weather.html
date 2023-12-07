@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather in City</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Weather in <span id="cityName">{{.cityName}}</span></h1>
+        <img id="weatherIcon" src="{{.weatherIconURL}}" alt="Weather Icon">
+        <p>Temperature: <span id="temperature">{{printf "%.2f" .temperature}}</span> &#8451;</p>
+        <p>Weather Description: <span id="weatherDescription">{{.weatherDescription}}</span></p>
+        <p>Humidity: <span id="humidity">{{.humidity}}</span>%</p>
+    </div>
+    <form action="/" method="get">
+        <button type="submit">Change City</button>
+    </form>
+
+</body>
+</html>

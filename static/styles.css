@@ -1,0 +1,91 @@
+.container {
+  width: 1000px;
+  margin: 50px auto;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+label {
+  margin-bottom: 20px;
+  font-size: 1.5em;
+}
+
+input {
+  padding: 8px;
+  margin-bottom: 30px;
+  font-size: 1.5em;
+  border: #333 1.5px solid;
+  border-radius: 5px;
+}
+
+input:focus {
+  outline: none;
+  border: #e62143 1.5px solid;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+h1 {
+  color: #333;
+  font-size: 2.5em;
+}
+
+img {
+  width: 200px;
+  height: 200px;
+}
+
+p {
+  margin: 10px 0;
+  font-size: 1.5em;
+}
+
+
+button {
+  background: #e62143;
+  border-radius: 11px;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  font-family: Mija,-apple-system,BlinkMacSystemFont,Roboto,"Roboto Slab","Droid Serif","Segoe UI",system-ui,Arial,sans-serif;
+  font-size: 1.15em;
+  font-weight: 700;
+  justify-content: center;
+  line-height: 33.4929px;
+  padding: .8em 1em;
+  text-align: center;
+  text-decoration: none;
+  text-decoration-skip-ink: auto;
+  text-shadow: rgba(0, 0, 0, .3) 1px 1px 1px;
+  text-underline-offset: 1px;
+  transition: all .2s ease-in-out;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: 50%;
+  word-break: break-word;
+  border: 0;
+}
+
+button:active,
+button:focus {
+  border-bottom-style: none;
+  border-color: #dadada;
+  box-shadow: rgba(0, 0, 0, .3) 0 3px 3px inset;
+  outline: 0;
+}
+
+button:hover {
+  border-bottom-style: none;
+  border-color: #dadada;
+}
+
