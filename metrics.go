@@ -22,15 +22,28 @@ var (
 		},
 		[]string{"path"},
 	)
+
+	totalAccesses = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "web_user_access_total",
+			Help: "Total number of user accesses to the website",
+		},
+		[]string{"user_ip"},
+	)
 )
 
 func init() {
 	prometheus.MustRegister(totalRequests)
 	prometheus.MustRegister(pageViews)
+	prometheus.MustRegister(totalAccesses)
 }
 
 func MetricsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		userIP := c.ClientIP()
+
+		totalAccesses.WithLabelValues(userIP).Inc()
+
 		totalRequests.WithLabelValues().Inc()
 
 		pageViews.WithLabelValues(c.FullPath()).Inc()
