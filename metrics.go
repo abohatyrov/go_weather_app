@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"log"
 )
 
 var (
@@ -53,5 +54,6 @@ func MetricsMiddleware() gin.HandlerFunc {
 }
 
 func MetricsHandler(c *gin.Context) {
+	log.Println("Handling metrics request")
 	promhttp.Handler().ServeHTTP(c.Writer, c.Request)
 }

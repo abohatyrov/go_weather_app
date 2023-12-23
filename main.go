@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-resty/resty/v2"
-	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 )
@@ -21,17 +21,33 @@ type WeatherData struct {
 	} `json:"weather"`
 }
 
+var logger = logrus.New()
+
+func Logger() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
+
+		logger.WithFields(logrus.Fields{
+			"status_code": c.Writer.Status(),
+			"method":      c.Request.Method,
+			"path":        c.Request.URL.Path,
+			"ip":          c.ClientIP(),
+		}).Info()
+	}
+}
+
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("Error loading .env file")
+	logger.SetFormatter(&logrus.JSONFormatter{})
+
+	apiKey := os.Getenv("OPENWEATHERMAP_API_KEY")
+	if apiKey == "" {
+		logger.Fatal("OPENWEATHERMAP_API_KEY environment variable is required")
 		return
 	}
 
-	apiKey := os.Getenv("OPENWEATHERMAP_API_KEY")
-
 	router := gin.Default()
 
+	router.Use(Logger())
 	router.Use(MetricsMiddleware())
 
 	router.Static("/static", "./static")
@@ -39,6 +55,7 @@ func main() {
 	router.LoadHTMLGlob("templates/*")
 
 	router.GET("/", func(c *gin.Context) {
+		logger.Info("Root endpoint hit")
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
 
@@ -47,6 +64,7 @@ func main() {
 
 		if city == "" {
 			c.JSON(400, gin.H{"error": "City parameter is required"})
+			logger.Warn("Weather endpoint hit without city parameter")
 			return
 		}
 
@@ -60,6 +78,7 @@ func main() {
 
 		if err != nil {
 			c.JSON(500, gin.H{"error": "Error contacting OpenWeatherMap API"})
+			logger.Error("Error contacting OpenWeatherMap API: ", err)
 			return
 		}
 
@@ -69,6 +88,7 @@ func main() {
 
 			if err != nil {
 				c.JSON(500, gin.H{"error": "Error parsing OpenWeatherMap API response"})
+				logger.Error("Error parsing OpenWeatherMap API response: ", err)
 				return
 			}
 
@@ -84,10 +104,12 @@ func main() {
 			})
 		} else {
 			c.JSON(resp.StatusCode(), gin.H{"error": resp.Status()})
+			logger.Fatal("Error from OpenWeatherMap API: ", resp.Status())
 		}
 	})
 
 	router.GET("/metrics", MetricsHandler)
 
+	logger.Info("Server starting on port 8080")
 	router.Run(":8080")
 }
