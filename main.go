@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-resty/resty/v2"
-	"github.com/sirupsen/logrus"
+	"io"
 	"net/http"
 	"os"
 )
@@ -21,23 +21,18 @@ type WeatherData struct {
 	} `json:"weather"`
 }
 
-var logger = logrus.New()
-
-func Logger() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Next()
-
-		logger.WithFields(logrus.Fields{
-			"status_code": c.Writer.Status(),
-			"method":      c.Request.Method,
-			"path":        c.Request.URL.Path,
-			"ip":          c.ClientIP(),
-		}).Info()
-	}
-}
-
 func main() {
-	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetFormatter(new(CustomFormatter))
+
+	file, err := os.OpenFile("logfile.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		logger.Fatal(err)
+	}
+	defer file.Close()
+
+	mw := io.MultiWriter(os.Stdout, file)
+
+	logger.SetOutput(mw)
 
 	apiKey := os.Getenv("OPENWEATHERMAP_API_KEY")
 	if apiKey == "" {
@@ -45,7 +40,9 @@ func main() {
 		return
 	}
 
-	router := gin.Default()
+	gin.SetMode(gin.ReleaseMode)
+
+	router := gin.New()
 
 	router.Use(Logger())
 	router.Use(MetricsMiddleware())
