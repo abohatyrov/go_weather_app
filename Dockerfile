@@ -35,7 +35,7 @@ FROM alpine:${ALPINE_VERSION} AS final
 
 WORKDIR /usr/src/app
 
-ENV OPENWEATHERMAP_API_KEY=${OPENWEATHERMAP_API_KEY}
+ENV OPENWEATHERMAP_API_KEY=$OPENWEATHERMAP_API_KEY
 
 COPY --from=build /usr/src/app/templates ./templates
 COPY --from=build /usr/src/app/static ./static

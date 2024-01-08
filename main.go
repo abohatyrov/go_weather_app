@@ -44,7 +44,7 @@ func main() {
 
 	router := gin.New()
 
-	router.Use(Logger())
+	router.Use(LoggerMiddleware())
 	router.Use(MetricsMiddleware())
 
 	router.Static("/static", "./static")

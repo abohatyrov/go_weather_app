@@ -28,7 +28,7 @@ func (f *CustomFormatter) Format(entry *log.Entry) ([]byte, error) {
 	return []byte(logString), nil
 }
 
-func Logger() gin.HandlerFunc {
+func LoggerMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
 
